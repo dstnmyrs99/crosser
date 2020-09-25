@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Crossing Game</title>
+    <style type="text/css">
+      canvas{
+        border: 2px solid black;
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Help Gert navigate through the evil Axles to save Alex!</h1>
+    <canvas id="canvas" width="1000" height="500"></canvas>
+
+
+    <script type="text/javascript">
+      let canvas = document.getElementById('canvas');
+      let ctx = canvas.getContext('2d');
+      let screenWidth = 1000;
+      let screenHeight = 500;
+      numOfEnemies = 1;
+      class Player{
+        constructor(x, y, width, height, speed){
+          this.x = 0;
+          this.y = 250;
+          this.width = 50;
+          this.height = 50;
+          this.speed = 0;
+        }
+        move = function(){
+          this.x += this.speed;
+      }
+    }
+      class Enemy{
+        constructor(x, y, width, height, speed){
+          this.x = Math.floor(Math.random() * 800) + 50;
+          this.y = Math.floor(Math.random() * 450);
+          this.width = 50;
+          this.height = 50;
+          this.speed = Math.floor(Math.random() * 15)+1;
+        }
+        move = function(){
+          if(this.y > 450){
+              this.speed = Math.floor(Math.random() * 12) + 2;
+              this.speed = -this.speed;
+          }
+          if(this.y < 0){
+            this.speed = Math.floor(Math.random() * 12) + 2;
+          }
+            this.y += this.speed;
+          }
+      }
+
+      class Goal{
+        constructor(x, y, width, height){
+          this.x = 950;
+          this.y = 250;
+          this.width = 50;
+          this.height = 50;
+        }
+      }
+
+      let rect = [];
+
+
+      createEnemies = function(){
+        let enemy = new Enemy;
+        rect.push(enemy);
+      }
+
+      let player = new Player();
+      let goal = new Goal();
+
+      document.onkeydown = function(event){
+        let keyPressed = event.keyCode;
+        if(keyPressed == 39){
+          player.speed = 5;
+        }else if (keyPressed == 37) {
+          player.speed = -5;
+        }
+      }
+      document.onkeyup = function(event){
+        player.speed = 0;
+      }
+
+      let checkCollision = function(rect1, rect2){
+        let xOverlap = Math.abs(rect1.x - rect2.x)<= Math.max(50, 50);
+        let yOverlap = Math.abs(rect1.y - rect2.y)<= Math.max(50, 50);
+        return xOverlap && yOverlap;
+      }
+      let sprites = {};
+      let loadSprites = function(){
+        sprites.player = new Image();
+        sprites.player.src = 'images/gert.JPG'
+        sprites.rect = new Image();
+        sprites.rect.src = 'images/axle.JPG'
+        sprites.goal = new Image();
+        sprites.goal.src = 'images/alex.JPG'
+      }
+
+      let draw = function(){
+        ctx.clearRect(0, 0, screenWidth, screenHeight);
+        ctx.drawImage(sprites.player, player.x, player.y);
+        ctx.drawImage(sprites.goal, goal.x, goal.y);
+      //  ctx.fillStyle = goal.color;
+      //  ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
+      //  ctx.fillStyle = player.color;
+      //  ctx.fillRect(player.x, player.y, player.width, player.height);
+        rect.forEach(function(i){
+          ctx.drawImage(sprites.rect, i.x, i.y);
+      //    ctx.fillStyle = i.color;
+      //    ctx.fillRect(i.x, i.y, i.width, i.height);
+        })
+      }
+
+
+      let update = function(){
+        player.move();
+        if(checkCollision(player, goal)){
+          numOfEnemies++
+          createEnemies();
+          player.x = 0;
+          player.y = 250;
+        }
+        rect.forEach(function(element){
+          if(checkCollision(player, element)){
+            alert(`You made it to level ${numOfEnemies}`);
+            window.location = ""
+          }
+          element.move();
+        })
+      }
+      let step = function(){
+        update();
+        draw();
+        window.requestAnimationFrame(step);
+      }
+      createEnemies();
+      loadSprites();
+      step();
+    </script>
+
+  </body>
+</html>

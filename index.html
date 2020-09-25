@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Crossing Game</title>
+    <style type="text/css">
+      canvas{
+        border: 2px solid black;
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Navigate through the spider infested area to get the treasure!</h1>
+    <canvas id="canvas" width="1000" height="500"></canvas>
+
+
+    <script type="text/javascript">
+      let canvas = document.getElementById('canvas');
+      let ctx = canvas.getContext('2d');
+      let screenWidth = 1000;
+      let screenHeight = 500;
+      numOfEnemies = 1;
+      class Player{
+        constructor(x, y, width, height, speed, shift, line, currentFrame){
+          this.x = 0;
+          this.y = 250;
+          this.width = 50;
+          this.height = 50;
+          this.speed = 0;
+          this.shift = 32;
+          this.line = 64;
+          this.currentFrame = 1;
+        }
+        move = function(){
+          if(this.currentFrame == 2){
+            this.shift = 0;
+            this.currentFrame = 0;
+          }
+          this.x += this.speed;
+          }
+      }
+      class Enemy{
+        constructor(x, y, width, height, speed, shift, line, currentFrame, currentLine){
+          this.x = Math.floor(Math.random() * 800) + 50;
+          this.y = Math.floor(Math.random() * 450);
+          this.width = 50;
+          this.height = 50;
+          this.speed = Math.floor(Math.random() * 15)+1;
+          this.shift = 0;
+          this.line = 0;
+          this.currentFrame = 0;
+          this.currentLine = 128;
+        }
+        move = function(){
+          if(this.y > 450){
+              this.speed = Math.floor(Math.random() * 12) + 2;
+              this.speed = -this.speed;
+              this.currentLine = 0;
+          }
+          if(this.y < 0){
+            this.speed = Math.floor(Math.random() * 12) + 2;
+            this.currentLine = 128;
+          }
+            this.y += this.speed;
+            this.line = this.currentLine
+          }
+      }
+
+      class Goal{
+        constructor(x, y, width, height){
+          this.x = 940;
+          this.y = 250;
+          this.width = 50;
+          this.height = 50;
+        }
+      }
+
+      let rect = [];
+
+
+      createEnemies = function(){
+        let enemy = new Enemy;
+        rect.push(enemy);
+      }
+
+      let player = new Player();
+      let goal = new Goal();
+
+      document.onkeydown = function(event){
+        let keyPressed = event.keyCode;
+        if(keyPressed == 39){
+          player.line = 64;
+          player.shift += 32;
+          player.currentFrame += 1
+          player.speed = 5;
+        }else if (keyPressed == 37) {
+          player.line = 32;
+          player.shift += 32;
+          player.currentFrame += 1
+          player.speed = -5;
+        }
+      }
+      document.onkeyup = function(event){
+        player.shift = 32;
+        player.speed = 0;
+      }
+
+      let checkCollision = function(rect1, rect2){
+        let xOverlap = rect1.x < rect2.x + 40 && rect1.x + 25 > rect2.x;//Math.abs(rect1.x - rect2.x)<= Math.max(16, 24);
+        let yOverlap = rect1.y < rect2.y + 35 && rect1.y + 25 > rect2.y;//Math.abs(rect1.y - rect2.y)<= Math.max(16, 24);
+        return xOverlap && yOverlap;
+      }
+      let sprites = {};
+      let loadSprites = function(){
+        sprites.spider = new Image();
+        sprites.spider.src ='images/spider05.png'
+        sprites.player = new Image();
+        sprites.player.src = 'images/player.png'
+        sprites.rect = new Image();
+        sprites.rect.src = 'images/axle.JPG'
+        sprites.goal = new Image();
+        sprites.goal.src = 'images/goal.png'
+      }
+
+      let draw = function(){
+        ctx.clearRect(0, 0, screenWidth, screenHeight);
+        ctx.drawImage(sprites.player, player.shift, player.line, 32, 32,
+                player.x, player.y, 32, 32);
+
+        ctx.drawImage(sprites.goal, goal.x, goal.y);
+      //  ctx.fillStyle = goal.color;
+      //  ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
+      //  ctx.fillStyle = player.color;
+      //  ctx.fillRect(player.x, player.y, player.width, player.height);
+        rect.forEach(function(i){
+          ctx.drawImage(sprites.spider, i.shift, i.line, 64, 64,
+                  i.x, i.y, 64, 64);
+                  i.shift += 64;
+                  i.currentFrame++;
+                  if(i.currentFrame == 10){
+                    i.shift = 0;
+                    i.currentFrame = 0;
+                  }
+
+      //    ctx.fillStyle = i.color;
+      //    ctx.fillRect(i.x, i.y, i.width, i.height);
+        })
+      }
+
+
+      let update = function(){
+        player.move();
+        if(checkCollision(player, goal)){
+          numOfEnemies++
+          createEnemies();
+          player.x = 0;
+          player.y = 250;
+        }
+        rect.forEach(function(element){
+          if(checkCollision(player, element)){
+            alert(`You made it to level ${numOfEnemies}`);
+            window.location = ""
+          }
+          element.move();
+        })
+      }
+      let step = function(){
+        update();
+        draw();
+        window.requestAnimationFrame(step);
+      }
+      createEnemies();
+      loadSprites();
+      step();
+    </script>
+
+  </body>
+</html>
