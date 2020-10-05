@@ -93,29 +93,29 @@
       let goal = new Goal();
 
 
-      document.getElementById("arrow-left").onmousedown = () =>{
+      document.getElementById("arrow-left").addEventListener("touchstart", () =>{
         player.line = 32;
         player.shift += 32;
         player.currentFrame += 1
         player.speed = -5;
-      }
+      })
 
-      document.getElementById("arrow-left").onmouseup = () =>{
+      document.getElementById("arrow-left").addEventListener("touchend", () =>{
         player.shift = 32;
         player.speed = 0;
-      }
+      })
 
-      document.getElementById("arrow-right").onmousedown = () =>{
+      document.getElementById("arrow-right").addEventListener("touchstart", () =>{
         player.line = 64;
         player.shift += 32;
         player.currentFrame += 1
         player.speed = 5;
-      }
+      })
 
-      document.getElementById("arrow-right").onmouseup = () =>{
+      document.getElementById("arrow-right").addEventListener("touchend", () =>{
         player.shift = 32;
         player.speed = 0;
-      }
+      })
 
 
       document.onkeydown = function(event){
