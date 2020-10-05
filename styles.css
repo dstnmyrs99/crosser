@@ -1,3 +1,6 @@
+* {
+      touch-action: manipulation;
+  }
 .arrow{
   width: 100px;
 }
