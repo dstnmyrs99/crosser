@@ -9,10 +9,15 @@
         background-color: red;
       }
     </style>
+    <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <h1>Navigate through the spider infested area to get the treasure!</h1>
     <canvas id="canvas" width="1000" height="500"></canvas>
+    <div class="container">
+      <div id="arrow-left"> <img class="arrow left" src="images/arrow.png" alt=""> </div>
+      <div id="arrow-right"> <img class="arrow" src="images/arrow.png" alt=""> </div>
+    </div>
 
 
     <script type="text/javascript">
@@ -87,6 +92,32 @@
       let player = new Player();
       let goal = new Goal();
 
+
+      document.getElementById("arrow-left").onmousedown = () =>{
+        player.line = 32;
+        player.shift += 32;
+        player.currentFrame += 1
+        player.speed = -5;
+      }
+
+      document.getElementById("arrow-left").onmouseup = () =>{
+        player.shift = 32;
+        player.speed = 0;
+      }
+
+      document.getElementById("arrow-right").onmousedown = () =>{
+        player.line = 64;
+        player.shift += 32;
+        player.currentFrame += 1
+        player.speed = 5;
+      }
+
+      document.getElementById("arrow-right").onmouseup = () =>{
+        player.shift = 32;
+        player.speed = 0;
+      }
+
+
       document.onkeydown = function(event){
         let keyPressed = event.keyCode;
         if(keyPressed == 39){
@@ -106,6 +137,8 @@
         player.speed = 0;
       }
 
+
+
       let checkCollision = function(rect1, rect2){
         let xOverlap = rect1.x < rect2.x + 40 && rect1.x + 25 > rect2.x;//Math.abs(rect1.x - rect2.x)<= Math.max(16, 24);
         let yOverlap = rect1.y < rect2.y + 35 && rect1.y + 25 > rect2.y;//Math.abs(rect1.y - rect2.y)<= Math.max(16, 24);
@@ -117,8 +150,6 @@
         sprites.spider.src ='images/spider05.png'
         sprites.player = new Image();
         sprites.player.src = 'images/player.png'
-        sprites.rect = new Image();
-        sprites.rect.src = 'images/axle.JPG'
         sprites.goal = new Image();
         sprites.goal.src = 'images/goal.png'
       }

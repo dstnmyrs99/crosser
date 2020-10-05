@@ -1,0 +1,10 @@
+.arrow{
+  width: 100px;
+}
+.container{
+  display: flex;
+  justify-content: space-between;
+}
+.left{
+  transform: rotate(180deg);
+}
