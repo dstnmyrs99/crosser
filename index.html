@@ -198,8 +198,9 @@
         }
         rect.forEach(function(element){
           if(checkCollision(player, element)){
-            alert(`You made it to level ${numOfEnemies}`);
             window.location = ""
+            alert(`You made it to level ${numOfEnemies}`);
+
           }
           element.move();
         })
